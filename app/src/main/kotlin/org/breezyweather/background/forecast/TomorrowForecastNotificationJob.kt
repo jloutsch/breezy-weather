@@ -27,6 +27,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import breezyweather.data.location.LocationRepository
 import breezyweather.data.weather.WeatherRepository
+import breezyweather.domain.weather.model.Weather
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.breezyweather.common.extensions.cancelNotification
@@ -56,22 +57,23 @@ class TomorrowForecastNotificationJob @AssistedInject constructor(
         setForegroundSafely()
 
         return try {
-            if (SettingsManager.getInstance(context).isTomorrowForecastEnabled) {
+            val settings = SettingsManager.getInstance(context)
+            if (settings.isTomorrowForecastEnabled) {
                 val location = locationRepository.getFirstLocation(withParameters = false)
                 if (location != null) {
-                    notifier.showComplete(
-                        location.copy(
-                            weather = weatherRepository.getWeatherByLocationId(
-                                location.formattedId,
-                                withDaily = true,
-                                withHourly = false,
-                                withMinutely = false,
-                                withAlerts = false,
-                                withNormals = false
-                            )
-                        ),
-                        today = false
+                    val weather = weatherRepository.getWeatherByLocationId(
+                        location.formattedId,
+                        withDaily = true,
+                        withHourly = false,
+                        withMinutely = false,
+                        withAlerts = false,
+                        withNormals = false
                     )
+                    if (isPrecipitationLikelyEnough(weather, settings.tomorrowForecastPrecipitationThreshold)) {
+                        notifier.showComplete(location.copy(weather = weather), today = false)
+                    } else {
+                        notifier.dismiss(today = false)
+                    }
                 } else {
                     notifier.dismiss(today = false)
                 }
@@ -104,6 +106,20 @@ class TomorrowForecastNotificationJob @AssistedInject constructor(
 
     companion object {
         private const val TAG = "ForecastNotificationTomorrow"
+
+        /** Precipitation thresholds offered in settings, in percent; 0 means always notify. */
+        val PRECIPITATION_THRESHOLDS = listOf(0, 50, 70, 90)
+
+        /** True when no threshold is set, or tomorrow's day or night precipitation chance reaches it. */
+        fun isPrecipitationLikelyEnough(weather: Weather?, threshold: Int): Boolean {
+            if (threshold <= 0) return true
+            val tomorrow = weather?.tomorrow ?: return false
+            val probability = listOfNotNull(
+                tomorrow.day?.precipitationProbability?.total?.inPercent,
+                tomorrow.night?.precipitationProbability?.total?.inPercent
+            ).maxOrNull() ?: return false
+            return probability >= threshold
+        }
 
         fun isRunning(context: Context): Boolean {
             return context.workManager.isRunning(TAG)

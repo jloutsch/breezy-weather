@@ -40,6 +40,7 @@ import org.breezyweather.ui.common.widgets.Material3Scaffold
 import org.breezyweather.ui.common.widgets.generateCollapsedScrollBehavior
 import org.breezyweather.ui.common.widgets.insets.FitStatusBarTopAppBar
 import org.breezyweather.ui.settings.preference.bottomInsetItem
+import org.breezyweather.ui.settings.preference.composables.ListPreferenceViewWithCard
 import org.breezyweather.ui.settings.preference.composables.PreferenceScreen
 import org.breezyweather.ui.settings.preference.composables.PreferenceViewWithCard
 import org.breezyweather.ui.settings.preference.composables.SwitchPreferenceView
@@ -150,6 +151,20 @@ fun NotificationsSettingsScreen(
                 )
             }
             smallSeparatorItem()
+            switchPreferenceItem(R.string.settings_notifications_alerts_minor_title) { id ->
+                SwitchPreferenceView(
+                    titleId = id,
+                    summaryOnId = R.string.settings_notifications_alerts_minor_summary_on,
+                    summaryOffId = R.string.settings_notifications_alerts_minor_summary_off,
+                    checked = SettingsManager.getInstance(context).isAlertPushMinorEnabled,
+                    enabled = SettingsManager.getInstance(context).updateInterval != UpdateInterval.INTERVAL_NEVER &&
+                        hasNotificationPermission,
+                    onValueChanged = {
+                        SettingsManager.getInstance(context).isAlertPushMinorEnabled = it
+                    }
+                )
+            }
+            smallSeparatorItem()
             switchPreferenceItem(R.string.settings_notifications_precipitations_title) { id ->
                 SwitchPreferenceView(
                     titleId = id,
@@ -224,10 +239,35 @@ fun NotificationsSettingsScreen(
                     titleId = id,
                     currentTime = SettingsManager.getInstance(context).tomorrowForecastTime,
                     enabled = tomorrowForecastEnabled && hasNotificationPermission,
-                    isLast = true,
                     onValueChanged = {
                         SettingsManager.getInstance(context).tomorrowForecastTime = it
                         TomorrowForecastNotificationJob.setupTask(context, false)
+                    }
+                )
+            }
+            smallSeparatorItem()
+            listPreferenceItem(R.string.settings_notifications_forecast_tomorrow_precipitation_title) { id ->
+                val thresholds = TomorrowForecastNotificationJob.PRECIPITATION_THRESHOLDS
+                val names = thresholds.map {
+                    if (it == 0) {
+                        stringResource(R.string.settings_notifications_forecast_tomorrow_precipitation_always)
+                    } else {
+                        stringResource(R.string.settings_notifications_forecast_tomorrow_precipitation_at_least, it)
+                    }
+                }.toTypedArray()
+                val values = thresholds.map { it.toString() }.toTypedArray()
+                ListPreferenceViewWithCard(
+                    title = stringResource(id),
+                    summary = { _, value -> names.getOrNull(values.indexOf(value)) },
+                    selectedKey = SettingsManager.getInstance(context)
+                        .tomorrowForecastPrecipitationThreshold.toString(),
+                    valueArray = values,
+                    nameArray = names,
+                    enabled = tomorrowForecastEnabled && hasNotificationPermission,
+                    isLast = true,
+                    onValueChanged = {
+                        SettingsManager.getInstance(context).tomorrowForecastPrecipitationThreshold =
+                            it.toIntOrNull() ?: 0
                     }
                 )
             }

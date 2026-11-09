@@ -92,6 +92,7 @@ import org.breezyweather.ui.main.dialogs.LicenseComplianceDialog
 import org.breezyweather.ui.main.fragments.HomeFragment
 import org.breezyweather.ui.main.fragments.ManagementFragment
 import org.breezyweather.ui.main.fragments.PushedManagementFragment
+import org.breezyweather.ui.radar.RadarActivity
 import org.breezyweather.ui.search.SearchActivity
 import org.breezyweather.ui.theme.ThemeManager
 import org.breezyweather.ui.theme.compose.BreezyWeatherTheme
@@ -894,6 +895,10 @@ class MainActivity : BreezyActivity(), HomeFragment.Callback, ManagementFragment
                 SnackbarHelper.showSnackbar(getString(R.string.action_open_in_other_app_no_app))
             }
         }
+    }
+
+    override fun onRadarIconClicked() {
+        RadarActivity.start(this, viewModel.currentLocation.value?.location)
     }
 
     override fun onManageIconClicked() {

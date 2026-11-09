@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!--
+  Radar / weather maps screen, ported from GeauxWeather (GPL-3.0-or-later).
+  maps.js, kmz.js and css/maps.css come from https://github.com/jloutsch/GeauxWeather.
+  Leaflet 1.9.4 (BSD-2-Clause). Radar tiles: RainViewer. Map tiles: OpenStreetMap.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>Radar</title>
+  <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="css/maps.css" />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --border: #2a3444;
+      --text: #e8eef6;
+      --muted: #8b9bb4;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Roboto", sans-serif;
+      overscroll-behavior: none;
+    }
+    .hidden { display: none !important; }
+    .muted { color: var(--muted); }
+    .small { font-size: 0.78rem; }
+    .maps-wrap {
+      height: 100%;
+      padding: 8px 10px 10px;
+    }
+    #map.map-container {
+      flex: 1 1 auto;
+      height: auto;
+      min-height: 240px;
+    }
+  </style>
+</head>
+<body>
+  <div class="maps-wrap">
+    <div class="map-toolbar">
+      <button class="layer-btn active" data-layer="radar">Rain/Snow</button>
+      <button class="layer-btn" data-layer="wind">Wind</button>
+      <button class="layer-btn" data-layer="fog">Fog</button>
+      <button class="layer-btn" data-layer="rivers">Rivers</button>
+      <button class="layer-btn" data-layer="lightning">Lightning</button>
+      <button class="layer-btn" data-layer="hurricane">Hurricane</button>
+      <button class="layer-btn" data-layer="tornado">Tornado</button>
+      <button class="layer-btn" data-layer="eclipse">Eclipse</button>
+      <button type="button" id="map-recenter" class="layer-btn map-tool-btn" title="Recenter">⊙</button>
+    </div>
+    <div id="map" class="map-container" role="application" aria-label="Weather map"></div>
+    <div class="map-pin-bar">
+      <span id="map-pin-hint" class="map-pin-hint">Tap map to drop a pin</span>
+    </div>
+    <div id="radar-controls" class="radar-controls">
+      <button type="button" id="radar-prev" class="radar-btn" aria-label="Previous">‹</button>
+      <button type="button" id="radar-play" class="radar-btn play" aria-label="Play">▶</button>
+      <button type="button" id="radar-next" class="radar-btn" aria-label="Next">›</button>
+      <input type="range" id="radar-slider" class="radar-slider" min="0" max="0" value="0" />
+      <span id="radar-time" class="radar-time">—</span>
+    </div>
+    <div id="rain-outlook" class="rain-outlook hidden" aria-live="polite">
+      <div class="rain-outlook-head">
+        <span class="rain-outlook-title">Rain next 12h at pin</span>
+        <span class="rain-outlook-sub muted small" id="rain-outlook-sub">Open-Meteo hourly</span>
+      </div>
+      <div id="rain-outlook-bars" class="rain-outlook-bars"></div>
+    </div>
+    <div id="map-info" class="map-info hidden"></div>
+    <div class="map-legend" id="map-legend">Tap map to pin · RainViewer</div>
+  </div>
+
+  <script src="js/breezy-bridge.js"></script>
+  <script src="lib/leaflet/leaflet.js"></script>
+  <script src="js/kmz.js"></script>
+  <script src="js/maps.js"></script>
+  <script src="js/breezy-main.js"></script>
+</body>
+</html>

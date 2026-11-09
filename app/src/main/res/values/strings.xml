@@ -472,6 +472,7 @@
     <string name="action_add_as_location">Add as location</string>
     <string name="action_add_debug_location" translatable="false">Add debug location</string>
     <string name="action_edit_location">Edit this location</string>
+    <string name="action_radar">Radar</string>
     <string name="action_open_in_other_app">Open in another app</string>
     <string name="action_open_in_other_app_description">Open this location in another app</string>
     <string name="action_open_in_other_app_no_app">No maps app found</string>
@@ -826,11 +827,17 @@
     <string name="settings_notifications_section_general" translatable="false">@string/settings_section_general</string>
     <!-- “important” means we won’t send notifications for minor severity alerts -->
     <string name="settings_notifications_alerts_title">Notifications of severe weather alerts</string>
+    <string name="settings_notifications_alerts_minor_title">Include minor alerts</string>
+    <string name="settings_notifications_alerts_minor_summary_on">Advisories and other minor alerts are notified too</string>
+    <string name="settings_notifications_alerts_minor_summary_off">Only moderate, severe and extreme alerts (warnings, watches) are notified</string>
     <string name="settings_notifications_precipitations_title">Notifications of precipitations</string>
     <string name="settings_notifications_section_forecast">Forecast</string>
     <string name="settings_notifications_forecast_today_title">Notification for the day’s forecast</string>
     <string name="settings_notifications_forecast_time_today_title">Notification time for the day’s forecast</string>
     <string name="settings_notifications_forecast_tomorrow_title">Notification for next-day forecast</string>
+    <string name="settings_notifications_forecast_tomorrow_precipitation_title">Send next-day forecast</string>
+    <string name="settings_notifications_forecast_tomorrow_precipitation_always">Every day</string>
+    <string name="settings_notifications_forecast_tomorrow_precipitation_at_least">Only when rain or snow chance is at least %d%%</string>
     <string name="settings_notifications_forecast_time_tomorrow_title">Notification time for next-day forecast</string>
     <string name="settings_modules">External modules</string>
     <string name="settings_modules_summary">Widgets, notification widget, wallpaper, data sharing with other apps</string>
@@ -841,6 +848,8 @@
     <string name="settings_modules_live_wallpaper_error">Couldn’t launch wallpaper chooser. You can still enable %s wallpaper by choosing “Live Wallpaper” in your home screen wallpaper picker.</string>
     <string name="settings_modules_week_icon_mode_title">Icon to display in weekly views</string>
     <string name="settings_modules_monochrome_icons_title">Monochrome icons</string>
+    <string name="settings_modules_widget_clock_app_title">App opened by the widget clock</string>
+    <string name="settings_modules_widget_clock_app_default">System alarms (default)</string>
     <string name="settings_modules_section_widgets_in_use">Widgets in use</string>
     <string name="settings_modules_configure_widget_summary">Configure this widget</string>
     <string name="settings_modules_section_notification_widget">Notification widget</string>

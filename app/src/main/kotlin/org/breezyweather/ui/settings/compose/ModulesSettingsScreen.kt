@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -43,6 +44,7 @@ import org.breezyweather.common.source.BroadcastSource
 import org.breezyweather.common.utils.helpers.SnackbarHelper
 import org.breezyweather.domain.settings.SettingsManager
 import org.breezyweather.domain.settings.SourceConfigStore
+import org.breezyweather.remoteviews.ClockAppHelper
 import org.breezyweather.remoteviews.config.ClockDayDetailsWidgetConfigActivity
 import org.breezyweather.remoteviews.config.ClockDayHorizontalWidgetConfigActivity
 import org.breezyweather.remoteviews.config.ClockDayVerticalWidgetConfigActivity
@@ -73,6 +75,7 @@ import org.breezyweather.ui.common.widgets.insets.FitStatusBarTopAppBar
 import org.breezyweather.ui.settings.preference.bottomInsetItem
 import org.breezyweather.ui.settings.preference.clickablePreferenceItem
 import org.breezyweather.ui.settings.preference.composables.ListPreferenceView
+import org.breezyweather.ui.settings.preference.composables.ListPreferenceViewWithCard
 import org.breezyweather.ui.settings.preference.composables.PackagePreferenceView
 import org.breezyweather.ui.settings.preference.composables.PreferenceScreen
 import org.breezyweather.ui.settings.preference.composables.PreferenceViewWithCard
@@ -176,9 +179,27 @@ fun ModulesSettingsScreen(
                     summaryOnId = R.string.settings_enabled,
                     summaryOffId = R.string.settings_disabled,
                     checked = SettingsManager.getInstance(context).isWidgetUsingMonochromeIcons,
-                    isLast = true,
                     onValueChanged = {
                         SettingsManager.getInstance(context).isWidgetUsingMonochromeIcons = it
+                        updateWidgetIfNecessary(context)
+                    }
+                )
+            }
+            smallSeparatorItem()
+            listPreferenceItem(R.string.settings_modules_widget_clock_app_title) { id ->
+                val defaultName = stringResource(R.string.settings_modules_widget_clock_app_default)
+                val apps = remember { ClockAppHelper.getLaunchableApps(context) }
+                val values = remember(apps) { arrayOf("") + apps.map { it.packageName } }
+                val names = remember(apps, defaultName) { arrayOf(defaultName) + apps.map { it.label } }
+                ListPreferenceViewWithCard(
+                    title = stringResource(id),
+                    summary = { _, value -> names.getOrNull(values.indexOf(value)) ?: defaultName },
+                    selectedKey = SettingsManager.getInstance(context).widgetClockAppPackage ?: "",
+                    valueArray = values,
+                    nameArray = names,
+                    isLast = true,
+                    onValueChanged = {
+                        SettingsManager.getInstance(context).widgetClockAppPackage = it
                         updateWidgetIfNecessary(context)
                     }
                 )

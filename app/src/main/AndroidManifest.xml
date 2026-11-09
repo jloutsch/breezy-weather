@@ -72,6 +72,10 @@
         <intent>
             <action android:name="nodomain.freeyourgadget.gadgetbridge.ACTION_GENERIC_WEATHER" />
         </intent>
+        <!-- Clock apps, for the app opened by the clock on clock widgets -->
+        <intent>
+            <action android:name="android.intent.action.SHOW_ALARMS" />
+        </intent>
     </queries>
 
     <application
@@ -143,6 +147,18 @@
             android:name=".ui.details.DetailsActivity"
             android:label="@string/daily_forecast"
             android:theme="@style/BreezyWeatherTheme" />
+
+        <activity
+            android:name=".ui.radar.RadarActivity"
+            android:label="@string/action_radar"
+            android:theme="@style/BreezyWeatherTheme"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="${applicationId}.ACTION_SHOW_RADAR" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".ui.alert.AlertActivity"

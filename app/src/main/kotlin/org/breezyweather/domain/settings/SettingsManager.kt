@@ -147,6 +147,14 @@ class SettingsManager private constructor(
         }
         get() = config.getBoolean("alert_notification_switch", true)
 
+    /** Also notify minor alerts (advisories); off means only moderate, severe, extreme and unknown. */
+    var isAlertPushMinorEnabled: Boolean
+        set(value) {
+            config.edit().putBoolean("alert_notification_minor_switch", value).apply()
+            notifySettingsChanged()
+        }
+        get() = config.getBoolean("alert_notification_minor_switch", false)
+
     var isPrecipitationPushEnabled: Boolean
         set(value) {
             config.edit().putBoolean("precipitation_notification_switch", value).apply()
@@ -396,6 +404,17 @@ class SettingsManager private constructor(
         }
         get() = config.getBoolean("timing_forecast_switch_tomorrow", false)
 
+    /**
+     * Only send the next-day forecast notification when tomorrow's precipitation probability
+     * reaches this percentage (rain or snow). 0 means always send it.
+     */
+    var tomorrowForecastPrecipitationThreshold: Int
+        set(value) {
+            config.edit().putInt("timing_forecast_tomorrow_precipitation_threshold", value).apply()
+            notifySettingsChanged()
+        }
+        get() = config.getInt("timing_forecast_tomorrow_precipitation_threshold", 0)
+
     var tomorrowForecastTime: String
         set(value) {
             config.edit().putString("forecast_time_tomorrow", value).apply()
@@ -422,6 +441,14 @@ class SettingsManager private constructor(
             notifySettingsChanged()
         }
         get() = config.getBoolean("widget_monochrome_icons", false)
+
+    /** Package of the app the clock on clock widgets opens; null means the system alarm screen. */
+    var widgetClockAppPackage: String?
+        set(value) {
+            config.edit().putString("widget_clock_app_package", value?.ifEmpty { null }).apply()
+            notifySettingsChanged()
+        }
+        get() = config.getString("widget_clock_app_package", null)?.ifEmpty { null }
 
     // notification widget
     var isWidgetNotificationEnabled: Boolean

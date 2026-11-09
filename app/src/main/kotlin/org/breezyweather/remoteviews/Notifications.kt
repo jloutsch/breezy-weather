@@ -172,17 +172,19 @@ object Notifications {
         oldResult: Weather?,
     ) {
         val weather = location.weather
-        if (weather == null || !SettingsManager.getInstance(context).isAlertPushEnabled) return
+        val settings = SettingsManager.getInstance(context)
+        if (weather == null || !settings.isAlertPushEnabled) return
+
+        val includeMinor = settings.isAlertPushMinorEnabled
+        val isNotifiable = { alert: Alert -> includeMinor || alert.severity != AlertSeverity.MINOR }
 
         val alertList = mutableListOf<Alert>()
         if (oldResult == null) {
-            alertList.addAll(weather.alertList)
+            alertList.addAll(weather.alertList.filter(isNotifiable))
         } else {
             val idSet = mutableSetOf<String>()
             val desSet = mutableSetOf<String>()
-            for (alert in oldResult.alertList.filter {
-                it.severity != AlertSeverity.MINOR
-            }) {
+            for (alert in oldResult.alertList.filter(isNotifiable)) {
                 idSet.add(alert.alertId)
                 desSet.add(
                     alert.headline?.ifEmpty {
@@ -190,9 +192,7 @@ object Notifications {
                     } ?: context.getString(R.string.alert)
                 )
             }
-            for (alert in weather.alertList.filter {
-                it.severity != AlertSeverity.MINOR
-            }) {
+            for (alert in weather.alertList.filter(isNotifiable)) {
                 if (!idSet.contains(alert.alertId) &&
                     !desSet.contains(
                         alert.headline?.ifEmpty {

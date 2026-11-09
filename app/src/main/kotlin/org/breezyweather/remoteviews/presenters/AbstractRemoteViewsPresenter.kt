@@ -24,7 +24,6 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
-import android.provider.AlarmClock
 import android.provider.CalendarContract
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -54,6 +53,7 @@ import org.breezyweather.domain.weather.model.getName
 import org.breezyweather.domain.weather.model.getShortDescription
 import org.breezyweather.domain.weather.model.getSummary
 import org.breezyweather.domain.weather.model.pollensWithConcentration
+import org.breezyweather.remoteviews.ClockAppHelper
 import org.breezyweather.ui.theme.ThemeManager
 import org.breezyweather.unit.formatting.UnitWidth
 import org.breezyweather.unit.formatting.format
@@ -244,7 +244,7 @@ abstract class AbstractRemoteViewsPresenter {
             return PendingIntent.getActivity(
                 context,
                 requestCode,
-                Intent(AlarmClock.ACTION_SHOW_ALARMS),
+                ClockAppHelper.getClockIntent(context),
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
